@@ -1,4 +1,6 @@
 package gui;
+import components.Doily;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -21,6 +23,7 @@ import javax.swing.event.ChangeListener;
 
 public class ControlPanel extends Container {
 
+	private Doily doily;
 	private int width;
 	private int height;
 	private Color selectedColor;
@@ -30,11 +33,10 @@ public class ControlPanel extends Container {
 	private boolean reflectSet;
 	private int sectors;
 	
-
-	
-	public ControlPanel(int width, int height) {
+	public ControlPanel(int width, int height, Doily doily) {
 		this.width = width;
 		this.height = height;
+		this.doily = doily;
 		this.setLayout(new GridLayout(1, 3));
 		this.setPreferredSize(new Dimension(width, height));
 		
@@ -120,7 +122,7 @@ public class ControlPanel extends Container {
 		JLabel reflectLabel;
 		JCheckBox reflect;
 		Container sectorsContainer = new Container();
-		sectorsContainer.setLayout(new FlowLayout());
+		sectorsContainer.setLayout(new BorderLayout());
 		JLabel sectorsLabel;
 		JSlider sectorSlider;
 		JLabel doilyLabel;
@@ -139,13 +141,13 @@ public class ControlPanel extends Container {
 		container.add(topDoilyRow, BorderLayout.NORTH);
 		
 		sectorsLabel = new JLabel("Sectors:");
-		sectorsContainer.add(sectorsLabel);
+		sectorsContainer.add(sectorsLabel, BorderLayout.WEST);
 		sectorSlider = new JSlider(JSlider.HORIZONTAL, 0, 36, 0);
 		sectorSlider.setMajorTickSpacing(4);
 		sectorSlider.setMinorTickSpacing(1);
 		sectorSlider.setPaintTicks(true);
 		sectorSlider.setPaintLabels(true);
-		sectorsContainer.add(sectorSlider);
+		sectorsContainer.add(sectorSlider, BorderLayout.EAST);
 		
 		container.add(sectorsContainer, BorderLayout.CENTER);
 		
@@ -156,12 +158,23 @@ public class ControlPanel extends Container {
 		
 		//Creates relevant listeners for Doily Components
 		
-		lines.addActionListener(e -> linesVisible = !linesVisible);
-		reflect.addActionListener(e -> reflectSet = !reflectSet);
+		lines.addActionListener(e -> {
+			linesVisible = !linesVisible;
+			doily.setLinesVisible(linesVisible);
+		});
+
+		reflect.addActionListener(e -> {
+			reflectSet = !reflectSet;
+			doily.setReflect(reflectSet);
+		});
 		
 		sectorSlider.addChangeListener(e -> {
 			JSlider slider = (JSlider) e.getSource(); 
 			sectors = slider.getValue();
+			if (sectors == 0) {
+				sectors = 1;
+			}
+			doily.setSectors(sectors);
 		});
 		
 		return container;
