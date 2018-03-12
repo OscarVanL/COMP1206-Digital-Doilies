@@ -37,8 +37,14 @@ public class ControlPanel extends Container {
 		this.width = width;
 		this.height = height;
 		this.doily = doily;
-		this.setLayout(new GridLayout(1, 3));
-		this.setPreferredSize(new Dimension(width, height));
+		setLayout(new GridLayout(1, 3));
+		setPreferredSize(new Dimension(width, height));
+		eraserSet = false;
+		penSize = 1;
+		linesVisible = false;
+		reflectSet = false;
+		sectors = 1;
+
 		
 		//Adds all sections to Control Panel
 		this.add(penGui());
@@ -99,9 +105,14 @@ public class ControlPanel extends Container {
 		colourSelector.addActionListener(e -> {
 	    	selectedColor = JColorChooser.showDialog(null, "Choose Colour", Color.WHITE);
 	    	colourSelectorBg.setBackground(selectedColor);
+	    	doily.setColour(selectedColor);
 		});
 		
-		eraser.addActionListener(e -> eraserSet = !eraserSet);
+		eraser.addActionListener(e -> {
+			eraserSet = !eraserSet;
+			doily.setEraser(eraserSet);
+			System.out.println("Toggling eraser state, now: " + eraserSet);
+		});
 		
 		penSizeSlider.addChangeListener(e -> {
 			JSlider slider = (JSlider) e.getSource(); 
@@ -217,9 +228,18 @@ public class ControlPanel extends Container {
 		
 		//Creates relevant listeners for Utility buttons
 		
-		undo.addActionListener(e -> System.out.println("Undo button pressed"));
-		redo.addActionListener(e -> System.out.println("Redo button pressed"));
-		clear.addActionListener(e -> System.out.println("Clear button pressed"));
+		undo.addActionListener(e -> {
+			System.out.println("Undo button pressed");
+			doily.undo();
+		});
+		redo.addActionListener(e -> {
+			System.out.println("Redo button pressed");
+			doily.redo();
+		});
+		clear.addActionListener(e -> {
+			System.out.println("Clear button pressed");
+			doily.clear();
+		});
 		save.addActionListener(e -> System.out.println("Save button pressed"));
 		
 		return container;

@@ -1,17 +1,21 @@
 package components;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import gui.PenStroke;
+import io.DrawingHandler;
 
-public class Doily extends Component implements MouseListener {
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+
+public class Doily extends Component {
 	private int height;
 	private int width;
 	private double radius;
 	private int centreX;
 	private int centreY;
+	private DrawingHandler drawingHandler;
+	private Color colour;
+	private boolean eraserSet;
 	private int sectors;
 	private boolean linesVisible;
 	private boolean reflectSet;
@@ -22,23 +26,39 @@ public class Doily extends Component implements MouseListener {
 		this.radius = diameter / 2;
 		this.centreX = width/2;
 		this.centreY = height/2;
+		this.colour = Color.WHITE;
+		this.eraserSet = false;
 		this.sectors = 0;
 		this.linesVisible = false;
 		this.reflectSet = false;
 		this.setPreferredSize(new Dimension(width, height));
-		addMouseListener(this);
-		setListener();
+
+		drawingHandler = new DrawingHandler();
+		this.addMouseListener(drawingHandler);
+		this.addMouseMotionListener(drawingHandler);
 	}
 	
 	public void paint(Graphics g) {
+
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, height, width);
+
+		displaySectorLines(g);
+		displayStrokes(g);
+
+	}
+
+	/**
+	 * Displays the relevant number of Sector Lines if more than 1 sectors is set, and if these are set to display.
+	 * @param g : Graphics instance of Doily
+	 */
+	private void displaySectorLines(Graphics g) {
 		if (linesVisible) {
 			g.setColor(Color.WHITE);
 		}
 		if (sectors > 1) {
-			int degreeDifference = 360 / sectors;
-			for (int i = 0; i < 360; i += degreeDifference) {
+			float degreeDifference = 360 / (float) sectors;
+			for (float i = degreeDifference; i <= 360; i += degreeDifference) {
 				int endX = centreX + (int) (Math.cos(Math.toRadians(i)) * radius);
 				int endY = centreX + (int) (Math.sin(Math.toRadians(i)) * radius);
 				g.drawLine(centreX, centreY, endX, endY);
@@ -46,8 +66,93 @@ public class Doily extends Component implements MouseListener {
 		}
 	}
 
-	private void setListener() {
+	private void displayStrokes(Graphics g) {
+		Point2D.Float lastPoint = null;
+		Point2D.Double reflectedPoint = null;
+		Point2D.Double lastReflectedPoint = null;
 
+		//For each stroke in our DrawingHandler (all strokes)
+		for (PenStroke stroke : drawingHandler.getLines()) {
+
+			float degreeDifference = 360;
+			if (sectors > 1) {
+				degreeDifference = 360 / (float) sectors;
+				System.out.println("With float/int: " + 360/sectors);
+				System.out.println("With float/(float)int: " + 360/(float)sectors);
+			}
+
+			Graphics2D g2d = (Graphics2D) g.create();
+			g2d.setColor(stroke.getColour());
+
+			//For-loop to enable repetition across sectors
+			for (float i = degreeDifference; i <= 360; i += degreeDifference) {
+				//Rotate our g2d instance by the relevant number of degrees
+				g2d.rotate(Math.toRadians(degreeDifference), centreX, centreY);
+
+				//For each coordinate point in each of our Strokes
+				for (Point2D.Float point : stroke) {
+					//We define a 'last point' for each stroke, this is so we can join the points together to form curvy lines.
+					//If this is not yet defined, just define it as itself for now.
+					if (lastPoint == null) {
+						lastPoint = point;
+					}
+
+					Line2D.Float line = new Line2D.Float(lastPoint, point);
+					g2d.draw(line);
+
+					//If we have the reflect checkbox on, the drawing of reflected points is handled here.
+					if (reflectSet) {
+						reflectedPoint = new Point2D.Double((width - point.getX()), point.getY());
+						if (lastReflectedPoint == null) {
+							lastReflectedPoint = reflectedPoint;
+						}
+						Line2D.Float reflectedLine = new Line2D.Float(lastReflectedPoint, reflectedPoint);
+						g2d.draw(reflectedLine);
+					}
+
+					//Update the last point
+					lastPoint = point;
+					lastReflectedPoint = reflectedPoint;
+
+				}
+				//After finishing a stroke, remove the last point, so that different strokes aren't connected together
+				lastPoint = null;
+				lastReflectedPoint = null;
+			}
+			//Dispose and create a new g2d object between strokes, as they may have different colours and thicknesses.
+			g2d.dispose();
+		}
+	}
+
+	/*public void reflectLine(Line2D.Float line, int degreeDifference) {
+		Graphics2D g2d = (Graphics2D) g.create();
+		g2d.setColor(Color.WHITE));
+		AffineTransform transform = new AffineTransform();
+
+	}*/
+
+	public void undo() {
+		drawingHandler.undoLast();
+	}
+
+	public void redo() {
+		drawingHandler.redoLast();
+	}
+
+	public void setColour(Color c) {
+		this.colour = c;
+	}
+
+	public Color getColour() {
+		return this.colour;
+	}
+
+	public void setEraser(boolean eraser) {
+		this.eraserSet = eraser;
+	}
+
+	public boolean isErasing() {
+		return eraserSet;
 	}
 
 	public void setSectors(int sectors) {
@@ -55,9 +160,17 @@ public class Doily extends Component implements MouseListener {
 		this.repaint();
 	}
 
+	public int getSectors() {
+		return sectors;
+	}
+
 	public void setLinesVisible(boolean linesVisible) {
 		this.linesVisible = linesVisible;
 		this.repaint();
+	}
+
+	public boolean linesVisible() {
+		return linesVisible;
 	}
 
 	public void setReflect(boolean reflectSet) {
@@ -65,28 +178,11 @@ public class Doily extends Component implements MouseListener {
 		this.repaint();
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
+	public boolean isReflectSet() {
+		return reflectSet;
 	}
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		System.out.println("Mouse pressed");
-
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-
+	public void clear() {
+		drawingHandler.clearStrokes();
 	}
 }
