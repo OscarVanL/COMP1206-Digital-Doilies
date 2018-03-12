@@ -22,9 +22,9 @@ public class UserInterface {
 		container = frame.getContentPane();
 		container.setLayout(new BorderLayout());
 
-		Doily doily = new Doily(width, width, (width * 0.9));
-		ControlPanel control = new ControlPanel(width, (int)(height*0.14), doily);
 		Gallery gallery = new Gallery((int)(height*0.2), (int)(height*0.91));
+		Doily doily = new Doily(width, width, (width * 0.9), gallery);
+		ControlPanel control = new ControlPanel(width, (int)(height*0.14), doily);
 		container.add(control, BorderLayout.NORTH);
 		container.add(doily, BorderLayout.CENTER);
 		container.add(gallery, BorderLayout.EAST);

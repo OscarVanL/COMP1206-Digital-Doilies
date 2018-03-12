@@ -1,9 +1,9 @@
 package components;
+import gui.Gallery;
 import gui.PenStroke;
 import io.DrawingHandler;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
@@ -16,26 +16,28 @@ public class Doily extends Component {
 	private DrawingHandler drawingHandler;
 	private Color colour;
 	private boolean eraserSet;
+	private int penSize;
 	private int sectors;
 	private boolean linesVisible;
 	private boolean reflectSet;
 	
-	public Doily(int width, int height, double diameter) {
+	public Doily(int width, int height, double diameter, Gallery gallery) {
 		this.width = width;
 		this.height = height;
-		this.radius = diameter / 2;
-		this.centreX = width/2;
-		this.centreY = height/2;
-		this.colour = Color.WHITE;
-		this.eraserSet = false;
-		this.sectors = 0;
-		this.linesVisible = false;
-		this.reflectSet = false;
-		this.setPreferredSize(new Dimension(width, height));
+		radius = diameter / 2;
+		centreX = width/2;
+		centreY = height/2;
+		colour = Color.WHITE;
+		eraserSet = false;
+		penSize = 1;
+		sectors = 0;
+		linesVisible = false;
+		reflectSet = false;
+		setPreferredSize(new Dimension(width, height));
 
 		drawingHandler = new DrawingHandler();
-		this.addMouseListener(drawingHandler);
-		this.addMouseMotionListener(drawingHandler);
+		addMouseListener(drawingHandler);
+		addMouseMotionListener(drawingHandler);
 	}
 	
 	public void paint(Graphics g) {
@@ -77,8 +79,6 @@ public class Doily extends Component {
 			float degreeDifference = 360;
 			if (sectors > 1) {
 				degreeDifference = 360 / (float) sectors;
-				System.out.println("With float/int: " + 360/sectors);
-				System.out.println("With float/(float)int: " + 360/(float)sectors);
 			}
 
 			Graphics2D g2d = (Graphics2D) g.create();
@@ -96,7 +96,7 @@ public class Doily extends Component {
 					if (lastPoint == null) {
 						lastPoint = point;
 					}
-
+					g2d.setStroke(new BasicStroke(stroke.getThickness()));
 					Line2D.Float line = new Line2D.Float(lastPoint, point);
 					g2d.draw(line);
 
@@ -124,21 +124,6 @@ public class Doily extends Component {
 		}
 	}
 
-	/*public void reflectLine(Line2D.Float line, int degreeDifference) {
-		Graphics2D g2d = (Graphics2D) g.create();
-		g2d.setColor(Color.WHITE));
-		AffineTransform transform = new AffineTransform();
-
-	}*/
-
-	public void undo() {
-		drawingHandler.undoLast();
-	}
-
-	public void redo() {
-		drawingHandler.redoLast();
-	}
-
 	public void setColour(Color c) {
 		this.colour = c;
 	}
@@ -155,13 +140,12 @@ public class Doily extends Component {
 		return eraserSet;
 	}
 
-	public void setSectors(int sectors) {
-		this.sectors = sectors;
-		this.repaint();
+	public void setPenSize(int size) {
+		this.penSize = size;
 	}
 
-	public int getSectors() {
-		return sectors;
+	public int getPenSize() {
+		return penSize;
 	}
 
 	public void setLinesVisible(boolean linesVisible) {
@@ -182,7 +166,29 @@ public class Doily extends Component {
 		return reflectSet;
 	}
 
+	public void setSectors(int sectors) {
+		this.sectors = sectors;
+		this.repaint();
+	}
+
+	public int getSectors() {
+		return sectors;
+	}
+
+	public void undo() {
+		drawingHandler.undoLast();
+	}
+
+	public void redo() {
+		drawingHandler.redoLast();
+	}
+
 	public void clear() {
 		drawingHandler.clearStrokes();
+	}
+
+	public void save() {
+
+		System.out.println("Save functionality not yet implemented");
 	}
 }

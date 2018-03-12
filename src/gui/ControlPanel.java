@@ -117,6 +117,7 @@ public class ControlPanel extends Container {
 		penSizeSlider.addChangeListener(e -> {
 			JSlider slider = (JSlider) e.getSource(); 
 			penSize = slider.getValue();
+			doily.setPenSize(penSize);
 		});
 		
 		return container;
@@ -240,7 +241,10 @@ public class ControlPanel extends Container {
 			System.out.println("Clear button pressed");
 			doily.clear();
 		});
-		save.addActionListener(e -> System.out.println("Save button pressed"));
+		save.addActionListener(e -> {
+			System.out.println("Save button pressed");
+			doily.save();
+		});
 		
 		return container;
 	}
