@@ -9,11 +9,7 @@ import java.util.List;
 public class PenStroke implements Iterable<Point2D.Float> {
     private Color colour;
     private int thickness;
-    private List<Point2D.Float> points;
-
-    public PenStroke() {
-        this.points = new ArrayList<Point2D.Float>();
-    }
+    private List<Point2D.Float> points = new ArrayList<Point2D.Float>();
 
     public void addPoint(float x, float y) {
         points.add(new Point2D.Float(x, y));

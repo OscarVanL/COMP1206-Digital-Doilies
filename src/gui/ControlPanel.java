@@ -27,11 +27,11 @@ public class ControlPanel extends Container {
 	private int width;
 	private int height;
 	private Color selectedColor;
-	private boolean eraserSet;
-	private int penSize;
-	private boolean linesVisible;
-	private boolean reflectSet;
-	private int sectors;
+	private boolean eraserSet = false;
+	private int penSize = 1;
+	private boolean linesVisible = false;
+	private boolean reflectSet = false;
+	private int sectors = 1;
 	
 	public ControlPanel(int width, int height, Doily doily) {
 		this.width = width;
@@ -39,12 +39,6 @@ public class ControlPanel extends Container {
 		this.doily = doily;
 		setLayout(new GridLayout(1, 3));
 		setPreferredSize(new Dimension(width, height));
-		eraserSet = false;
-		penSize = 1;
-		linesVisible = false;
-		reflectSet = false;
-		sectors = 1;
-
 		
 		//Adds all sections to Control Panel
 		this.add(penGui());

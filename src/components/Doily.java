@@ -3,48 +3,45 @@ import gui.Gallery;
 import gui.PenStroke;
 import io.DrawingHandler;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 
-public class Doily extends Component {
+public class Doily extends JPanel {
 	private int height;
 	private int width;
+	private Gallery gallery;
 	private double radius;
 	private int centreX;
 	private int centreY;
 	private DrawingHandler drawingHandler;
-	private Color colour;
-	private boolean eraserSet;
-	private int penSize;
-	private int sectors;
-	private boolean linesVisible;
-	private boolean reflectSet;
+	private Color colour = Color.WHITE;;
+	private boolean eraserSet = false;
+	private int penSize = 1;
+	private int sectors = 0;
+	private boolean linesVisible = false;
+	private boolean reflectSet = false;
+	private BufferedImage doilyImage;
 	
 	public Doily(int width, int height, double diameter, Gallery gallery) {
 		this.width = width;
 		this.height = height;
+		this.gallery = gallery;
 		radius = diameter / 2;
 		centreX = width/2;
 		centreY = height/2;
-		colour = Color.WHITE;
-		eraserSet = false;
-		penSize = 1;
-		sectors = 0;
-		linesVisible = false;
-		reflectSet = false;
-		setPreferredSize(new Dimension(width, height));
+		doilyImage = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 
+		setPreferredSize(new Dimension(width, height));
 		drawingHandler = new DrawingHandler();
 		addMouseListener(drawingHandler);
 		addMouseMotionListener(drawingHandler);
 	}
-	
+
+	//Paints the doily.
 	public void paint(Graphics g) {
-
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, height, width);
-
 		displaySectorLines(g);
 		displayStrokes(g);
 
@@ -55,12 +52,18 @@ public class Doily extends Component {
 	 * @param g : Graphics instance of Doily
 	 */
 	private void displaySectorLines(Graphics g) {
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, height, width);
+
 		if (linesVisible) {
 			g.setColor(Color.WHITE);
 		}
+
 		if (sectors > 1) {
-			float degreeDifference = 360 / (float) sectors;
-			for (float i = degreeDifference; i <= 360; i += degreeDifference) {
+			//Truncate to 2 decimal places, otherwise final sector line does not draw in some cases
+			double degreeDifference = Math.floor(360 / (float) sectors * 100) / 100;
+			for (double i = 90 + degreeDifference; i <= 450; i += degreeDifference) {
+				System.out.println(i);
 				int endX = centreX + (int) (Math.cos(Math.toRadians(i)) * radius);
 				int endY = centreX + (int) (Math.sin(Math.toRadians(i)) * radius);
 				g.drawLine(centreX, centreY, endX, endY);
@@ -76,7 +79,7 @@ public class Doily extends Component {
 		//For each stroke in our DrawingHandler (all strokes)
 		for (PenStroke stroke : drawingHandler.getLines()) {
 
-			float degreeDifference = 360;
+			double degreeDifference = 360;
 			if (sectors > 1) {
 				degreeDifference = 360 / (float) sectors;
 			}
@@ -85,7 +88,7 @@ public class Doily extends Component {
 			g2d.setColor(stroke.getColour());
 
 			//For-loop to enable repetition across sectors
-			for (float i = degreeDifference; i <= 360; i += degreeDifference) {
+			for (double i = degreeDifference; i <= 360; i += degreeDifference) {
 				//Rotate our g2d instance by the relevant number of degrees
 				g2d.rotate(Math.toRadians(degreeDifference), centreX, centreY);
 
@@ -188,7 +191,8 @@ public class Doily extends Component {
 	}
 
 	public void save() {
-
-		System.out.println("Save functionality not yet implemented");
+	    Graphics2D g2d = doilyImage.createGraphics();
+	    this.paintAll(g2d);
+	    gallery.saveImage(doilyImage);
 	}
 }
