@@ -1,15 +1,12 @@
 package gui;
-import components.Doily;
 
+import components.Doily;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -18,8 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class ControlPanel extends Container {
 
@@ -41,16 +36,19 @@ public class ControlPanel extends Container {
 		setPreferredSize(new Dimension(width, height));
 		
 		//Adds all sections to Control Panel
-		this.add(penGui());
-		this.add(doilyGui());
-		this.add(utilityGui());
+		add(penGui());
+		add(doilyGui());
+		add(utilityGui());
 	}
-	
-	public Container penGui() {
-		//Components / Containers
+
+	/**
+	 * Initialises and adds GUI Components and listeners for Pen section of settings pane
+	 * @return Container : Container with correctly configured pen GUI section
+	 */
+	private Container penGui() {
+		//Components and Containers in Pen Configuration Section
 		Container container = new Container();
 		container.setLayout(new BorderLayout());
-		
 		Container topPenRow = new Container();
 		topPenRow.setLayout(new FlowLayout());
 		JLabel colourLabel;
@@ -66,6 +64,7 @@ public class ControlPanel extends Container {
 		
 		
 		//Pen section of configuration UI
+		//Colour Selector
 		colourLabel = new JLabel("Colour:");
 		topPenRow.add(colourLabel);
 		colourSelector = new JButton();
@@ -73,13 +72,13 @@ public class ControlPanel extends Container {
 		colourSelectorBg.setBackground(Color.WHITE);
 		colourSelector.add(colourSelectorBg);
 		topPenRow.add(colourSelector);
-		
+		//Eraser Toggle
 		eraserLabel = new JLabel("Eraser:");
 		topPenRow.add(eraserLabel);
 		eraser = new JCheckBox();
 		topPenRow.add(eraser);
 		container.add(topPenRow, BorderLayout.NORTH);
-		
+		//Size slider
 		penSizeLabel = new JLabel("Size:");
 		penSizeContainer.add(penSizeLabel);
 		penSizeSlider = new JSlider(JSlider.HORIZONTAL, 0, 24, 0);
@@ -89,7 +88,8 @@ public class ControlPanel extends Container {
 		penSizeSlider.setPaintLabels(true);
 		penSizeContainer.add(penSizeSlider);
 		container.add(penSizeContainer, BorderLayout.CENTER);
-		
+
+		//Settings section label
 		penLabel = new JLabel("PEN", SwingConstants.CENTER);
 		penLabel.setPreferredSize(new Dimension(width/3, 30));
 		container.add(new JSeparator(SwingConstants.VERTICAL), BorderLayout.EAST);
@@ -105,7 +105,6 @@ public class ControlPanel extends Container {
 		eraser.addActionListener(e -> {
 			eraserSet = !eraserSet;
 			doily.setEraser(eraserSet);
-			System.out.println("Toggling eraser state, now: " + eraserSet);
 		});
 		
 		penSizeSlider.addChangeListener(e -> {
@@ -116,8 +115,13 @@ public class ControlPanel extends Container {
 		
 		return container;
 	}
-	
-	public Container doilyGui() {
+
+	/**
+	 * Initialises and adds GUI Components and listeners for Doily section of settings pane
+	 * @return Container : Container with correctly configured doily GUI section
+	 */
+	private Container doilyGui() {
+		//Components and Containers in Doily Configuration section
 		Container container = new Container();
 		container.setLayout(new BorderLayout());
 		
@@ -135,17 +139,18 @@ public class ControlPanel extends Container {
 		
 		
 		//Doily section of configuration UI
-		linesLabel = new JLabel("Show lines:");
+		//Sector lines checkbox
+		linesLabel = new JLabel("Sector lines:");
 		topDoilyRow.add(linesLabel);
 		lines = new JCheckBox();
 		topDoilyRow.add(lines);
-		
+		//Reflect checkbox
 		reflectLabel = new JLabel("Reflect:");
 		topDoilyRow.add(reflectLabel);
 		reflect = new JCheckBox();
 		topDoilyRow.add(reflect);
 		container.add(topDoilyRow, BorderLayout.NORTH);
-		
+		//Sectors slider
 		sectorsLabel = new JLabel("Sectors:");
 		sectorsContainer.add(sectorsLabel, BorderLayout.WEST);
 		sectorSlider = new JSlider(JSlider.HORIZONTAL, 0, 36, 0);
@@ -156,14 +161,14 @@ public class ControlPanel extends Container {
 		sectorsContainer.add(sectorSlider, BorderLayout.EAST);
 		
 		container.add(sectorsContainer, BorderLayout.CENTER);
-		
+
+		//Doily Label
 		doilyLabel = new JLabel("DOILY", SwingConstants.CENTER);
 		doilyLabel.setPreferredSize(new Dimension(width/3, 30));
 		container.add(new JSeparator(SwingConstants.VERTICAL), BorderLayout.EAST);
 		container.add(doilyLabel, BorderLayout.SOUTH);
 		
 		//Creates relevant listeners for Doily Components
-		
 		lines.addActionListener(e -> {
 			linesVisible = !linesVisible;
 			doily.setLinesVisible(linesVisible);
@@ -177,6 +182,7 @@ public class ControlPanel extends Container {
 		sectorSlider.addChangeListener(e -> {
 			JSlider slider = (JSlider) e.getSource(); 
 			sectors = slider.getValue();
+			//Slider's default position is zero, for aesthetic reasons, however there is always at least 1 sector.
 			if (sectors == 0) {
 				sectors = 1;
 			}
@@ -185,8 +191,13 @@ public class ControlPanel extends Container {
 		
 		return container;
 	}
-	
-	public Container utilityGui() {
+
+	/**
+	 * Initialises and adds GUI Components and listeners for Utility section of settings pane
+	 * @return Container : Container with correctly configured utility GUI section
+	 */
+	private Container utilityGui() {
+		//Containers and Components in Utility section
 		Container container = new Container();
 		container.setLayout(new BorderLayout());
 		
@@ -202,27 +213,27 @@ public class ControlPanel extends Container {
 		
 		
 		//Utility section of configuration UI
+		//Undo button
 		undo = new JButton("Undo");
 		topUtilRow.add(undo);
-		
+		//Redo button
 		redo = new JButton("Redo");
 		topUtilRow.add(redo);
 		container.add(topUtilRow, BorderLayout.NORTH);
-		
+		//Clear button
 		clear = new JButton("Clear");
 		midUtilRow.add(clear);
-		
+		//Save button
 		save = new JButton("Save");
 		midUtilRow.add(save);
 		container.add(midUtilRow, BorderLayout.CENTER);
-		
+		//Utilities label
 		utilLabel = new JLabel("UTILITIES", SwingConstants.CENTER);
 		utilLabel.setPreferredSize(new Dimension(width/3, 30));
 		
 		container.add(utilLabel, BorderLayout.SOUTH);
 		
 		//Creates relevant listeners for Utility buttons
-		
 		undo.addActionListener(e -> {
 			System.out.println("Undo button pressed");
 			doily.undo();
@@ -241,53 +252,5 @@ public class ControlPanel extends Container {
 		});
 		
 		return container;
-	}
-	
-	/**
-	 * Returns the pen colour to use, as selected by the user
-	 * @return Color : Color object for the user's selected Colour
-	 */
-	private Color getPenColor() {
-		return selectedColor;
-	}
-	
-	/**
-	 * Returns the size pen to use, as selected by the user
-	 * @return int : Integer size of pen
-	 */
-	private int getPenSize() {
-		return penSize;
-	}
-	
-	/**
-	 * Returns the state of the eraser
-	 * @return boolean : True if the eraser is set, False if the eraser is not set
-	 */
-	private boolean eraserSet() {
-		return eraserSet;
-	}
-	
-	/**
-	 * Returns whether the lines between doily sectors are visible
-	 * @return boolean : True if visible, False if not.
-	 */
-	private boolean linesVisible() {
-		return linesVisible;
-	}
-	
-	/**
-	 * Returns whether the sectors will reflect or not
-	 * @return boolean : True if reflecting, False if not.
-	 */
-	private boolean reflectSet() {
-		return reflectSet;
-	}
-	
-	/**
-	 * Returns the number of sectors to display, as selected by the User
-	 * @return int : Integer number of sectors to display
-	 */
-	private int getSectors() {
-		return sectors;
 	}
 }

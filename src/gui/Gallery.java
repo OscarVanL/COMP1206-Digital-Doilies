@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Gallery extends JPanel {
+    private JPanel panel;
+    private List<GalleryImage> frames = new ArrayList<>();
+    private GalleryImage selectedGallery = null;
     private int usableDimension;
     private int storedImages = 0;
-    private List<GalleryImage> frames = new ArrayList<GalleryImage>();
-    private GalleryImage selectedGallery;
-    private JPanel panel;
 
     public Gallery(int width, int height) {
         setLayout(new BorderLayout());
@@ -22,10 +22,10 @@ public class Gallery extends JPanel {
         panel = new JPanel();
         JScrollPane scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(width, height));
+        scrollPane.getVerticalScrollBar().setUnitIncrement(12);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         //Gets the space remaining after the space occupied by the scroll bar.
         usableDimension = width - (int) scrollPane.getVerticalScrollBar().getPreferredSize().getWidth();
-        selectedGallery = new GalleryImage(usableDimension);
 
         //Draws our (empty) frames.
         drawAllFrames();
@@ -33,25 +33,28 @@ public class Gallery extends JPanel {
         JButton remove = new JButton("Remove");
         //Sets the listener and logic for removing GalleryImages
         remove.addActionListener(e -> {
-            int removedImageIndex = frames.indexOf(selectedGallery);
-            //Once GalleryImages become empty, filled GalleryImages take their place in the gallery queue
-            for (int i=removedImageIndex; i<storedImages-1; i++) {
-                System.out.println("test");
-                if (frames.get(i+1).imageSet()) {
-                    System.out.println("swapping");
-                    frames.set(i, frames.get(i+1));
-                    frames.set(i+1, selectedGallery);
+            //If we haven't selected anything to remove, don't try to remove anything!
+            if (selectedGallery != null) {
+                int removedImageIndex = frames.indexOf(selectedGallery);
+                //Once GalleryImages become empty, filled GalleryImages take their place in the gallery queue
+                for (int i=removedImageIndex; i<storedImages-1; i++) {
+                    System.out.println("test");
+                    if (frames.get(i+1).imageSet()) {
+                        System.out.println("swapping");
+                        frames.set(i, frames.get(i+1));
+                        frames.set(i+1, selectedGallery);
+                    }
                 }
+                //Only remove an image and deduct from the storedImages if the user has actually selected a frame.
+                if (selectedGallery.imageSet()) {
+                    selectedGallery.removeImage();
+                    storedImages--;
+                }
+                //Set the border colour to Black, as the image has been deselected.
+                selectedGallery.setBorderColour(Color.BLACK);
+                selectedGallery = null;
+                drawAllFrames();
             }
-            //Only remove an image and deduct from the storedImages if the user has actually selected a frame.
-            if (selectedGallery.imageSet()) {
-                selectedGallery.removeImage();
-                storedImages--;
-            }
-            //Set the border colour to Black, as the image has been deselected.
-            selectedGallery.setBorderColour(Color.BLACK);
-            drawAllFrames();
-            System.out.println("Remove button pressed");
         });
 
 
@@ -62,7 +65,7 @@ public class Gallery extends JPanel {
     /**
      * Adds all of the GalleryImages to the Gallery and sets their mouse listener.
      */
-    public void drawAllFrames() {
+    private void drawAllFrames() {
         panel.removeAll();
         for (int i=0; i<12; i++) {
             GalleryImage galleryImage = new GalleryImage(usableDimension);
