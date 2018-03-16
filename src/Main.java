@@ -1,9 +1,10 @@
-package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
 import javax.swing.JFrame;
 import components.Doily;
+import gui.ControlPanel;
+import gui.Gallery;
 
 public class Main {
 	
