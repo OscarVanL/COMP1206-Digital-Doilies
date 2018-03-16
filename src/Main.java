@@ -9,7 +9,6 @@ import gui.Gallery;
 public class Main {
 	
 	public static void main(String args[]) {
-		Main ui = new Main();
 		JFrame frame = new JFrame("Doily Generator");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
