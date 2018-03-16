@@ -38,9 +38,7 @@ public class Gallery extends JPanel {
                 int removedImageIndex = frames.indexOf(selectedGallery);
                 //Once GalleryImages become empty, filled GalleryImages take their place in the gallery queue
                 for (int i=removedImageIndex; i<storedImages-1; i++) {
-                    System.out.println("test");
                     if (frames.get(i+1).imageSet()) {
-                        System.out.println("swapping");
                         frames.set(i, frames.get(i+1));
                         frames.set(i+1, selectedGallery);
                     }

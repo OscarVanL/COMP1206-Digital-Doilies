@@ -234,22 +234,10 @@ public class ControlPanel extends Container {
 		container.add(utilLabel, BorderLayout.SOUTH);
 		
 		//Creates relevant listeners for Utility buttons
-		undo.addActionListener(e -> {
-			System.out.println("Undo button pressed");
-			doily.undo();
-		});
-		redo.addActionListener(e -> {
-			System.out.println("Redo button pressed");
-			doily.redo();
-		});
-		clear.addActionListener(e -> {
-			System.out.println("Clear button pressed");
-			doily.clear();
-		});
-		save.addActionListener(e -> {
-			System.out.println("Save button pressed");
-			doily.save();
-		});
+		undo.addActionListener(e -> doily.undo() );
+		redo.addActionListener(e -> doily.redo() );
+		clear.addActionListener(e -> doily.clear() );
+		save.addActionListener(e -> doily.save() );
 		
 		return container;
 	}

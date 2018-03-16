@@ -1,6 +1,5 @@
 
-import java.awt.BorderLayout;
-import java.awt.Container;
+import java.awt.*;
 import javax.swing.JFrame;
 import components.Doily;
 import gui.ControlPanel;
@@ -9,22 +8,21 @@ import gui.Gallery;
 public class Main {
 	
 	public static void main(String args[]) {
-		JFrame frame = new JFrame("Doily Generator");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new BorderLayout());
-		Container container = frame.getContentPane();
+		JFrame window = new JFrame("Doily Generator");
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setLayout(new BorderLayout());
+		window.setIconImage(Toolkit.getDefaultToolkit().getImage("doily-icon.png"));
+		Container container = window.getContentPane();
 		container.setLayout(new BorderLayout());
 
 		Gallery gallery = new Gallery(160, 675);
-		Doily doily = new Doily(750, 750, 680, gallery);
+		Doily doily = new Doily(750, 750, 700, gallery);
 		ControlPanel control = new ControlPanel(750, 125, doily);
 		container.add(control, BorderLayout.NORTH);
 		container.add(doily, BorderLayout.CENTER);
 		container.add(gallery, BorderLayout.EAST);
-		frame.setResizable(false);
-		frame.pack();
-		frame.setVisible(true);
+		window.setResizable(false);
+		window.pack();
+		window.setVisible(true);
 	}
-
-
 }

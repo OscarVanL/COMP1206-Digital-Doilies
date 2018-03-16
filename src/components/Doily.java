@@ -24,11 +24,11 @@ public class Doily extends JPanel {
 	private boolean reflectSet = false;
 	private BufferedImage doilyImage;
 	
-	public Doily(int width, int height, double diameter, Gallery gallery) {
+	public Doily(int width, int height, double sectorDiameter, Gallery gallery) {
 		this.width = width;
 		this.height = height;
 		this.gallery = gallery;
-		radius = diameter / 2;
+		radius = sectorDiameter / 2;
 		centreX = width/2;
 		centreY = height/2;
 		doilyImage = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
@@ -96,7 +96,7 @@ public class Doily extends JPanel {
 					if (lastPoint == null) {
 						lastPoint = point;
 					}
-					g2d.setStroke(new BasicStroke(stroke.getThickness()));
+					g2d.setStroke(new BasicStroke(stroke.getThickness(), BasicStroke.JOIN_ROUND, BasicStroke.CAP_ROUND));
 					Line2D.Float line = new Line2D.Float(lastPoint, point);
 					g2d.draw(line);
 
