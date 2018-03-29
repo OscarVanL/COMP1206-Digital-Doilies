@@ -1,5 +1,5 @@
 
-# COMP1204-Digital-Doilies
+# COMP1206-Digital-Doilies
 
 This is a digital drawing application for Doilies, Doilies are a "a small ornamental mat made of lace or paper with a lace pattern, put on a plate under cakes or other sweet food."
 Doilies use a repeated or reflected pattern across a circular or square frame.
