@@ -11,3 +11,4 @@ Tools included in this application include changing the pen colour, size, reflec
 3. Compile source with `javac *.java`
 4. Run with `java Main`
 
+Mark: 80%
